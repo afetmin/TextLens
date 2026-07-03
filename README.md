@@ -28,26 +28,6 @@ open .build/TextLens.app
 
 第一次运行后，在菜单栏点击“文镜”图标，选择“请求辅助功能权限”，然后到系统设置里允许 `TextLens` 使用辅助功能。
 
-`scripts/package-app.sh` 会生成 `.build/TextLens.app`，写入 `Info.plist`，复制应用图标，并进行签名。默认使用本地 ad-hoc 签名，适合开发测试。
-
-## 下载和发布
-
-本项目通过 GitHub Releases 发布 DMG。推送版本标签后，GitHub Actions 会在 macOS runner 上运行逻辑测试、构建 `.app`、打包 `.dmg`、生成 SHA256 校验文件，并把产物上传到对应 Release。
-
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
-
-本地也可以直接生成 DMG：
-
-```bash
-scripts/package-dmg.sh
-open .build/dist/TextLens-0.1.0.dmg
-```
-
-当前发布包默认是 ad-hoc 签名，尚未做 Apple notarization。首次运行时如果 macOS 提示开发者无法验证，可以在 Finder 中右键点击 `TextLens.app`，选择“打开”，再确认打开。
-
 ## 翻译和大模型配置
 
 打开 TextLens 设置页，可以选择翻译引擎：
@@ -83,7 +63,6 @@ open .build/dist/TextLens-0.1.0.dmg
 ## 贡献
 
 - 欢迎贡献，帮助更多的人，如果帮到了你还请不吝 Star🌟
-- CI 不包含 UI 测试；请优先补充纯逻辑测试，保持 `swift test` 通过。
 
 ## 许可证
 
