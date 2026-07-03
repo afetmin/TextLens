@@ -1,0 +1,21 @@
+.build/
+.swiftpm/
+.DS_Store
+DerivedData/
+
+# Xcode local state
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+
+# Local environment and logs
+.env
+.env.*
+*.log
+
+# Local build artifacts
+*.app
+*.dmg
+*.dSYM
+*.zip
+*.tar.gz

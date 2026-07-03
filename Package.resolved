@@ -1,0 +1,15 @@
+{
+  "originHash" : "9a09a027b141d9f924c2762c6f78cd283a0a6a4368bc3d482b7fca316bc5d649",
+  "pins" : [
+    {
+      "identity" : "permissionflow",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jaywcjlove/PermissionFlow.git",
+      "state" : {
+        "revision" : "a3ba66315b757d7f5e5893d0f4ff5df8cf93f9ea",
+        "version" : "2.6.0"
+      }
+    }
+  ],
+  "version" : 3
+}

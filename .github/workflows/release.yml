@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version without the leading v, for example 0.1.0"
+        required: true
+        default: "0.1.0"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build DMG and publish release
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Derive version
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            TAG_NAME="${GITHUB_REF_NAME}"
+          else
+            VERSION="${{ inputs.version }}"
+            TAG_NAME="v${VERSION}"
+          fi
+
+          if [[ -z "$VERSION" || "$VERSION" == "$TAG_NAME" ]]; then
+            echo "Could not derive a version from ${GITHUB_REF_NAME}" >&2
+            exit 1
+          fi
+
+          echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
+          echo "DMG_NAME=TextLens-${VERSION}.dmg" >> "$GITHUB_ENV"
+
+      - name: Run logic tests
+        run: swift test
+
+      - name: Build DMG
+        env:
+          APP_VERSION: ${{ env.APP_VERSION }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          DMG_NAME: ${{ env.DMG_NAME }}
+        run: scripts/package-dmg.sh
+
+      - name: Generate checksums
+        run: |
+          cd .build/dist
+          shasum -a 256 "$DMG_NAME" > "$DMG_NAME.sha256"
+          cat "$DMG_NAME.sha256"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TextLens-${{ env.APP_VERSION }}-dmg
+          path: |
+            .build/dist/${{ env.DMG_NAME }}
+            .build/dist/${{ env.DMG_NAME }}.sha256
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" \
+              ".build/dist/$DMG_NAME" \
+              ".build/dist/$DMG_NAME.sha256" \
+              --clobber
+          else
+            gh release create "$TAG_NAME" \
+              ".build/dist/$DMG_NAME" \
+              ".build/dist/$DMG_NAME.sha256" \
+              --title "TextLens ${APP_VERSION}" \
+              --generate-notes
+          fi
