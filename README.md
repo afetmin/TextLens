@@ -49,12 +49,8 @@ open .build/TextLens.app
 
 ## 隐私说明
 
-- TextLens 不包含遥测、广告 SDK、账号系统或远程日志上传。
-- 开启划词自动弹出后，TextLens 会监听全局鼠标/键盘选择意图，并通过 Accessibility 读取当前前台 App 暴露的选中文本。
-- 选中文本可能会发送给 Apple Translation，或发送给你配置的 OpenAI-compatible 服务，用于翻译或 AI 解释。
-- API Key 存在本机应用配置里，不写入仓库或示例日志。
-
-更完整的说明见 [PRIVACY.md](PRIVACY.md)。
+TextLens 不包含遥测、广告 SDK、账号系统或远程日志上传。
+划词翻译或解释时，选中文本会交给 Apple Translation 或你配置的 OpenAI-compatible 服务处理；API Key 只保存在本机配置中。
 
 ## 依赖
 
